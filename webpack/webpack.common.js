@@ -20,6 +20,13 @@ module.exports = {
 				exclude: /node_modules/,
 				use: 'ts-loader',
 			},
+			// {
+			// 	test: /\.(ts|js|js)x$/,
+			// 	exclude: /node_modules/,
+			// 	use: {
+			// 		loader: 'babel-loader',
+			// 	},
+			// },
 			{
 				test: /\.css$/,
 				use: ['style-loader', 'css-loader', 'postcss-loader'],
@@ -37,25 +44,27 @@ module.exports = {
 			library: { type: 'var', name: 'app1' },
 			filename: 'remoteEntry.js', // Name of remote entry file
 			exposes: {
-				// list of components exposed and source file mapping
 				'./App': './src/App',
 			},
 			shared: {
-				// List of dependencies shared across micro-frontend
-				...deps,
 				react: {
 					eager: true,
-					import: 'react', // the "react" package will be used a provided and fallback module
-					shareKey: 'react', // under this name the shared module will be placed in the share scope
-					shareScope: 'legacy', // share scope with this name will be used
-					singleton: true, // only a single version of the shared module is allowed
+					// import: 'react', // the "react" package will be used a provided and fallback module
+					// shareKey: 'react', // under this name the shared module will be placed in the share scope
+					// shareScope: 'legacy', // share scope with this name will be used
+					// singleton: true, // only a single version of the shared module is allowed
 				},
 				'react-dom': {
 					eager: true,
-					import: 'react-dom', // the "react" package will be used a provided and fallback module
-					shareKey: 'react-dom', // under this name the shared module will be placed in the share scope
-					shareScope: 'legacy', // share scope with this name will be used
-					singleton: true, // only a single version of the shared module is allowed
+					// import: 'react-dom', // the "react" package will be used a provided and fallback module
+					// shareKey: 'react-dom', // under this name the shared module will be placed in the share scope
+					// shareScope: 'legacy', // share scope with this name will be used
+					// singleton: true, // only a single version of the shared module is allowed
+				},
+				zustand: {
+					eager: true,
+					// singleton: true,
+					// requiredVersion: deps.zustand,
 				},
 			},
 		}),
