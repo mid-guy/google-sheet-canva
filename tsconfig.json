@@ -1,9 +1,9 @@
 {
 	"compilerOptions": {
+		"target": "ES5",
 		"module": "NodeNext",
 		"moduleResolution": "NodeNext",
 		"sourceMap": true,
-		"jsx": "react",
-		"target": "ES6"
+		"jsx": "react"
 	}
 }

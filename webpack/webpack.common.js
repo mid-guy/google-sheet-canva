@@ -1,10 +1,8 @@
 const path = require('path');
 const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 const { ModuleFederationPlugin } = require('webpack').container;
-const HtmlWebpackPlugin = require('html-webpack-plugin');
 const HotModuleReplacementPlugin =
 	require('webpack').HotModuleReplacementPlugin;
-const deps = require('../package.json').dependencies;
 
 module.exports = {
 	entry: path.resolve(__dirname, '..', './src/index.ts'),
@@ -20,13 +18,6 @@ module.exports = {
 				exclude: /node_modules/,
 				use: 'ts-loader',
 			},
-			// {
-			// 	test: /\.(ts|js|js)x$/,
-			// 	exclude: /node_modules/,
-			// 	use: {
-			// 		loader: 'babel-loader',
-			// 	},
-			// },
 			{
 				test: /\.css$/,
 				use: ['style-loader', 'css-loader', 'postcss-loader'],
@@ -45,6 +36,10 @@ module.exports = {
 			filename: 'remoteEntry.js', // Name of remote entry file
 			exposes: {
 				'./App': './src/App',
+			},
+			remotes: {
+				shared: 'shared',
+				app2: 'app2',
 			},
 			shared: {
 				react: {
@@ -67,10 +62,6 @@ module.exports = {
 					// requiredVersion: deps.zustand,
 				},
 			},
-		}),
-		new HtmlWebpackPlugin({
-			title: 'App 1',
-			template: path.resolve(__dirname, '..', './src/index.html'),
 		}),
 	],
 	output: {

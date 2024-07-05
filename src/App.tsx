@@ -1,28 +1,22 @@
-import * as React from 'react'
+import React, { Fragment, ReactNode } from 'react'
 import { useCallback, useEffect, useRef, useState } from "react";
 import './index.css'
+
 // @ts-ignore
-// import useStore from 'core-ui/store'
-// import Fallback2 from 'core-ui/Fallback2'
-// console.log(Fallback2)
-const cellSize = 30
+const App2 = React.lazy(() => import("app2/App").catch(() => {
+  // @ts-ignore
+  return <div>Fall to load</div>
+}))
+
+// @ts-ignore
+import useModuleHandler from 'shared/module-handler'
+
+const cellSize = 40
+
 const App = () => {
-  // const { count, increase, decrease } = useStore();
-  const [pointer, setPointer] = useState<{
-    visible: boolean
-    x: number,
-    y: number,
-    w: number,
-    h: number
-  }>({
-    visible: false,
-    x: 0,
-    y: 0,
-    w: 0,
-    h: 0
-  })
+  const { setInputAttributes } = useModuleHandler()
   const { canvasRef } = useCanvasBuilder()
-  const handleClick = useCallback((event: any) => {
+  const _click = useCallback((event: any) => {
     const canvas = canvasRef.current as any;
     const rect = canvas.getBoundingClientRect();
     const x = event.clientX - rect.left;
@@ -31,7 +25,7 @@ const App = () => {
     const row = Math.floor(y / cellSize);
     const cellX = col * (cellSize * 6);
     const cellY = row * cellSize;
-    setPointer({
+    setInputAttributes({
       visible: true,
       x: cellX,
       y: cellY,
@@ -39,21 +33,56 @@ const App = () => {
       h: cellSize
     });
   }, [])
-  const { x, y, w, h, visible } = pointer
   return (
     <div id='micro-app-1'>
-      <div className="relative">
-        <canvas ref={canvasRef} width={1600} height={900} onClick={handleClick} />
-        {visible && (
-          <div className="absolute border border-[#1C73E8] border-x-[3px] border-y-[3px]" style={{ top: y, left: x, width: w, height: h }}>
-            {/* <div className="absolute w-2 h-2 bg-blue-500 rounded-full" style={{ bottom: 1, right: 1 }}></div> */}
-          </div>
-        )}
+      <div style={{ position: 'relative' }}>
+        <SingleClickCapture callback={_click}>
+          <canvas
+            ref={canvasRef}
+            width={1600}
+            height={900}
+          />
+        </SingleClickCapture>
+        <React.Suspense fallback={<div>Loading App2...</div>}>
+          <App2 />
+        </React.Suspense>
       </div>
+    </div >
+  )
+}
+
+function withStopPropagation(callback: React.MouseEventHandler<HTMLElement>) {
+  return (e) => {
+    e.stopPropagation()
+    callback(e)
+  }
+}
+
+function DoubleClickCapture(props: { children: ReactNode, callback: React.MouseEventHandler<HTMLDivElement> }) {
+  const { callback, children } = props
+  return (
+    <div onDoubleClick={withStopPropagation(callback)}>
+      {children}
     </div>
   )
 }
 
+function SingleClickCapture(props: { children: ReactNode, callback: React.MouseEventHandler<HTMLDivElement> }) {
+  const { callback, children } = props
+  return (
+    <div onClick={callback}>
+      {children}
+    </div>
+  )
+}
+
+// {
+//   visible && (
+//     <div className="absolute border border-[#1C73E8] border-x-[3px] border-y-[3px]" style={{ top: y, left: x, width: w, height: h }}>
+//       {/* <div className="absolute w-2 h-2 bg-blue-500 rounded-full" style={{ bottom: 1, right: 1 }}></div> */}
+//     </div>
+//   )
+// }
 function useCanvasBuilder() {
   const canvasRef = useRef(null);
   useEffect(() => {

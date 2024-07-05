@@ -1,7 +1,9 @@
 <!DOCTYPE html>
 <html>
-
 <head>
+  <!-- <script src="http://localhost:3003/remoteEntry.js"></script> -->
+  <script src="<%= htmlWebpackPlugin.options.sharedRemoteEntry %>"></script>
+  <script src="<%= htmlWebpackPlugin.options.app2RemoteEntry %>"></script>
   <title>
     <%= htmlWebpackPlugin.options.title %>
   </title>
